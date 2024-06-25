@@ -2,6 +2,7 @@ package org.example.myproject.controller;
 
 import org.example.myproject.dto.JwtResponse;
 import org.example.myproject.dto.Response;
+import org.example.myproject.model.JwtToken;
 import org.example.myproject.model.Role;
 import org.example.myproject.model.User;
 import org.example.myproject.repository.JwtTokenRepository;
@@ -9,6 +10,7 @@ import org.example.myproject.service.JwtService;
 import org.example.myproject.service.RoleService;
 import org.example.myproject.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -21,7 +23,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collections;
-import java.util.List;
 
 @RestController
 @CrossOrigin("*")
@@ -100,6 +101,24 @@ public class LoginController {
                     new JwtResponse(jwt, currentUser.getId(), userDetails.getUsername(), userDetails.getAuthorities())));
         } catch (Exception e) {
             return ResponseEntity.ok(new Response("401", "Tài khoản hoặc mật khẩu không đúng", null));
+        }
+    }
+    @PostMapping("/logout")
+    public ResponseEntity<String> logout(@RequestHeader HttpHeaders httpHeaders) {
+        String authorization = httpHeaders.getFirst(HttpHeaders.AUTHORIZATION);
+        if (authorization != null && authorization.startsWith("Bearer ")) {
+            String token = authorization.substring(7);
+            JwtToken jwtToken = tokenRepository.findByTokenEquals(token);
+
+            if (jwtToken != null){
+                jwtToken.setValid(false);
+                tokenRepository.save(jwtToken);
+                return ResponseEntity.ok("đăng xuất thành công");
+            }else {
+                return ResponseEntity.badRequest().body("token không hợp lệ");
+            }
+        }else {
+            return ResponseEntity.badRequest().body("authorization thiếu hoặc không hợp lệ");
         }
     }
 
