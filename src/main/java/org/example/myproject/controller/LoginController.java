@@ -2,10 +2,12 @@ package org.example.myproject.controller;
 
 import org.example.myproject.dto.JwtResponse;
 import org.example.myproject.dto.Response;
+import org.example.myproject.model.Owner;
 import org.example.myproject.model.Role;
 import org.example.myproject.model.User;
 import org.example.myproject.repository.JwtTokenRepository;
 import org.example.myproject.service.JwtService;
+import org.example.myproject.service.OwnerService;
 import org.example.myproject.service.RoleService;
 import org.example.myproject.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,8 +28,6 @@ import java.util.List;
 @RestController
 @CrossOrigin("*")
 public class LoginController {
-    @Autowired
-    private JwtTokenRepository tokenRepository;
 
     @Autowired
     private AuthenticationManager authenticationManager;
@@ -43,6 +43,8 @@ public class LoginController {
 
     @Autowired
     private RoleService roleService;
+    @Autowired
+    private OwnerService ownerService;
 
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody User user, BindingResult bindingResult) {
@@ -62,20 +64,20 @@ public class LoginController {
     }
 
     @PostMapping("/registerManage")
-    public ResponseEntity<?> registerManage(@RequestBody User user, BindingResult bindingResult) {
+    public ResponseEntity<?> registerManage(@RequestBody Owner owner, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return ResponseEntity.badRequest().body(new Response("400", "Dữ liệu người dùng không hợp lệ", bindingResult.getFieldErrors()));
         }
 
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        owner.setPassword(passwordEncoder.encode(owner.getPassword()));
 
         Role roleManage = roleService.findByName("Role_manage");
-        user.setRoles(Collections.singletonList(roleManage));
-        user.setStatus(false);
-        user.setState(false);
+        owner.setRoles(Collections.singletonList(roleManage));
+        owner.setStatus(false);
+        owner.setState(false);
 
-        User userResponse = userService.save(user);
-        return new ResponseEntity<>(userResponse, HttpStatus.OK);
+        Owner OwnerResponse = ownerService.save(owner);
+        return new ResponseEntity<>(OwnerResponse, HttpStatus.OK);
     }
 
     @PostMapping("/login")

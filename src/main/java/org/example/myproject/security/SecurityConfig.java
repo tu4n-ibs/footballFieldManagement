@@ -39,9 +39,6 @@ public class SecurityConfig {
         return new UserServiceImpl();
     }
 
-    @Autowired
-    private UserService userService;
-
     @Bean
     public JwtAuthenticationFilter jwtAuthenticationFilter() {
         return new JwtAuthenticationFilter();
@@ -87,8 +84,8 @@ public class SecurityConfig {
         return http.cors(Customizer.withDefaults()).csrf(AbstractHttpConfigurer::disable)
                 .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/login", "/register", "/logout","registerManage", "/api/v1/**").permitAll()
-                        .requestMatchers("/users/**").hasAnyAuthority("Role_staff", "Role_admin","Role_manage")
+                        .requestMatchers("/login", "/register", "/logout","registerManage").permitAll()
+                        .requestMatchers("/users/**").hasAnyAuthority("Role_user", "Role_admin","Role_manage")
                         .requestMatchers("/admin/**").hasAnyAuthority("Role_admin")
                 )
                 .exceptionHandling(customizer -> customizer.accessDeniedHandler(customAccessDeniedHandler()))
