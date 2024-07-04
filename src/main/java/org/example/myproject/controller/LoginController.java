@@ -2,12 +2,9 @@ package org.example.myproject.controller;
 
 import org.example.myproject.dto.JwtResponse;
 import org.example.myproject.dto.Response;
-import org.example.myproject.model.Owner;
 import org.example.myproject.model.Role;
 import org.example.myproject.model.User;
-import org.example.myproject.repository.JwtTokenRepository;
 import org.example.myproject.service.JwtService;
-import org.example.myproject.service.OwnerService;
 import org.example.myproject.service.RoleService;
 import org.example.myproject.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +20,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collections;
-import java.util.List;
 
 @RestController
 @CrossOrigin("*")
@@ -43,8 +39,6 @@ public class LoginController {
 
     @Autowired
     private RoleService roleService;
-    @Autowired
-    private OwnerService ownerService;
 
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody User user, BindingResult bindingResult) {
@@ -64,20 +58,20 @@ public class LoginController {
     }
 
     @PostMapping("/registerManage")
-    public ResponseEntity<?> registerManage(@RequestBody Owner owner, BindingResult bindingResult) {
+    public ResponseEntity<?> registerManage(@RequestBody User user, BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return ResponseEntity.badRequest().body(new Response("400", "Dữ liệu người dùng không hợp lệ", bindingResult.getFieldErrors()));
         }
 
-        owner.setPassword(passwordEncoder.encode(owner.getPassword()));
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
 
         Role roleManage = roleService.findByName("Role_manage");
-        owner.setRoles(Collections.singletonList(roleManage));
-        owner.setStatus(false);
-        owner.setState(false);
+        user.setRoles(Collections.singletonList(roleManage));
+        user.setStatus(true);
+        user.setState(true);
 
-        Owner OwnerResponse = ownerService.save(owner);
-        return new ResponseEntity<>(OwnerResponse, HttpStatus.OK);
+        User UserResponse = userService.save(user);
+        return new ResponseEntity<>(UserResponse, HttpStatus.OK);
     }
 
     @PostMapping("/login")
@@ -104,5 +98,4 @@ public class LoginController {
             return ResponseEntity.ok(new Response("401", "Tài khoản hoặc mật khẩu không đúng", null));
         }
     }
-
 }

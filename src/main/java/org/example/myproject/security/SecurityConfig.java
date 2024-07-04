@@ -84,9 +84,10 @@ public class SecurityConfig {
         return http.cors(Customizer.withDefaults()).csrf(AbstractHttpConfigurer::disable)
                 .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/login", "/register", "/logout","registerManage").permitAll()
+                        .requestMatchers("/login", "/register", "/logout","/registerManage").permitAll()
                         .requestMatchers("/users/**").hasAnyAuthority("Role_user", "Role_admin","Role_manage")
                         .requestMatchers("/admin/**").hasAnyAuthority("Role_admin")
+                        .requestMatchers("/owner/**").hasAnyAuthority("Role_manage","Role_admin")
                 )
                 .exceptionHandling(customizer -> customizer.accessDeniedHandler(customAccessDeniedHandler()))
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

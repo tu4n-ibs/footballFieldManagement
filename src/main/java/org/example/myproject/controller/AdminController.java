@@ -1,7 +1,9 @@
 package org.example.myproject.controller;
 
-import org.example.myproject.model.Owner;
-import org.example.myproject.service.OwnerService;
+import org.example.myproject.model.Role;
+import org.example.myproject.model.User;
+import org.example.myproject.service.RoleService;
+import org.example.myproject.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,39 +16,24 @@ import java.util.List;
 public class AdminController {
 
     @Autowired
-    private OwnerService ownerService;
+    private UserService userService;
+    @Autowired
+    private RoleService roleService;
 
-    @GetMapping("/getAll")
-    public ResponseEntity<List<Owner>> getAllOwner() {
-        List<Owner> owners = ownerService.findAll();
-        return new ResponseEntity<>(owners, HttpStatus.OK);
+    @GetMapping("/getAllOwner")
+    public ResponseEntity getAllOwner() {
+        Role role = roleService.findByName("Role_manage");
+        List<User> ownerList = userService.findAllByRoles(role);
+        return new ResponseEntity<>(ownerList, HttpStatus.OK);
     }
-
-    @PostMapping("/createOwner")
-    public ResponseEntity<Owner> createOwner(@RequestBody Owner owner) {
-        Owner newOwner = ownerService.save(owner);
-        return new ResponseEntity<>(newOwner, HttpStatus.CREATED);
-    }
-
-    @DeleteMapping("/{id}/deleteOwner")
-    public ResponseEntity<Owner> deleteOwner(@PathVariable int id) {
-        ownerService.delete(id);
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
-
     @PutMapping("/{id}/updateOwner")
-    public ResponseEntity<Owner> updateOwner(@PathVariable long id, @RequestBody Owner owner) {
-        owner.setId(id);
-        Owner newOwner = ownerService.save(owner);
-        return new ResponseEntity<>(newOwner, HttpStatus.OK);
+    public ResponseEntity updateOwner(@RequestBody User user, @PathVariable long id) {
+        user.setId(id);
+        userService.save(user);
+        return new ResponseEntity<>("update success",HttpStatus.OK);
     }
 
-    @PostMapping("/{id}/accept")
-    public ResponseEntity<Owner> acceptOwner(@PathVariable long id) {
-        Owner owner = ownerService.acceptOwner(id);
-        if (owner != null) {
-            return ResponseEntity.ok(owner);
-        }
-        return ResponseEntity.notFound().build();
-    }
+
+
+
 }

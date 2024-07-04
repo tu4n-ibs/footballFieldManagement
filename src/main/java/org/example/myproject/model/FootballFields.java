@@ -3,6 +3,9 @@ package org.example.myproject.model;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+
 @Data
 @Entity
 public class FootballFields {
@@ -10,11 +13,16 @@ public class FootballFields {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
-    private String quantity;
     private int price;
     private String location;
     private boolean status;
     private String picture;
+    private String typeFields;
+    private String description;
+    private LocalTime openTime;
+    private LocalTime closeTime;
+
     @ManyToOne
-    private Owner owner;
+    private User user;
+
 }
