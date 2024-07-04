@@ -2,6 +2,7 @@ package org.example.myproject.service.impl;
 
 import jakarta.transaction.Transactional;
 import org.example.myproject.dto.UserPrinciple;
+import org.example.myproject.model.Role;
 import org.example.myproject.model.User;
 import org.example.myproject.repository.UserRepository;
 import org.example.myproject.service.UserService;
@@ -10,6 +11,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -38,6 +40,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public User findByUsername(String email) {
         return userRepository.findByEmail(email);
+    }
+
+    @Override
+    public List<User> findAllByRoles(Role role) {
+        return userRepository.findAllByRoles(role);
     }
 
     @Override

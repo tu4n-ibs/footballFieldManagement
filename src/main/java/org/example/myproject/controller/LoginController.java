@@ -4,7 +4,6 @@ import org.example.myproject.dto.JwtResponse;
 import org.example.myproject.dto.Response;
 import org.example.myproject.model.Role;
 import org.example.myproject.model.User;
-import org.example.myproject.repository.JwtTokenRepository;
 import org.example.myproject.service.JwtService;
 import org.example.myproject.service.RoleService;
 import org.example.myproject.service.UserService;
@@ -21,13 +20,10 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collections;
-import java.util.List;
 
 @RestController
 @CrossOrigin("*")
 public class LoginController {
-    @Autowired
-    private JwtTokenRepository tokenRepository;
 
     @Autowired
     private AuthenticationManager authenticationManager;
@@ -71,11 +67,11 @@ public class LoginController {
 
         Role roleManage = roleService.findByName("Role_manage");
         user.setRoles(Collections.singletonList(roleManage));
-        user.setStatus(false);
-        user.setState(false);
+        user.setStatus(true);
+        user.setState(true);
 
-        User userResponse = userService.save(user);
-        return new ResponseEntity<>(userResponse, HttpStatus.OK);
+        User UserResponse = userService.save(user);
+        return new ResponseEntity<>(UserResponse, HttpStatus.OK);
     }
 
     @PostMapping("/login")
@@ -102,5 +98,4 @@ public class LoginController {
             return ResponseEntity.ok(new Response("401", "Tài khoản hoặc mật khẩu không đúng", null));
         }
     }
-
 }
