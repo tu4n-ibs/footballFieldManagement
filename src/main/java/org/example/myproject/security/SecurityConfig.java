@@ -1,6 +1,7 @@
 package org.example.myproject.security;
 
 import org.example.myproject.security.jwt.CustomAccessDeniedHandler;
+import org.example.myproject.security.jwt.CustomLogoutSuccessHandler;
 import org.example.myproject.security.jwt.JwtAuthenticationFilter;
 import org.example.myproject.service.UserService;
 import org.example.myproject.service.impl.UserServiceImpl;
@@ -68,6 +69,11 @@ public class SecurityConfig {
     }
 
     @Bean
+    public CustomLogoutSuccessHandler customLogoutSuccessHandler() {
+        return new CustomLogoutSuccessHandler();
+    }
+
+    @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.addAllowedOriginPattern("*");
@@ -84,14 +90,20 @@ public class SecurityConfig {
         return http.cors(Customizer.withDefaults()).csrf(AbstractHttpConfigurer::disable)
                 .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/login", "/register", "/logout","/registerManage").permitAll()
-                        .requestMatchers("/users/**").hasAnyAuthority("Role_user", "Role_admin","Role_manage")
+                        .requestMatchers("/login", "/register", "/logout", "/registerManage", "/users/**").permitAll()
+                        .requestMatchers("/users/**").hasAnyAuthority("Role_user", "Role_admin", "Role_manage")
                         .requestMatchers("/admin/**").hasAnyAuthority("Role_admin")
-                        .requestMatchers("/owner/**").hasAnyAuthority("Role_manage","Role_admin")
+                        .requestMatchers("/owner/**").hasAnyAuthority("Role_manage")
                 )
                 .exceptionHandling(customizer -> customizer.accessDeniedHandler(customAccessDeniedHandler()))
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .httpBasic(Customizer.withDefaults())
+                .logout(logout -> logout
+                        .logoutUrl("/logout")
+                        .logoutSuccessHandler(customLogoutSuccessHandler())
+                        .invalidateHttpSession(true)
+                        .deleteCookies("JSESSIONID")
+                )
                 .build();
     }
 }

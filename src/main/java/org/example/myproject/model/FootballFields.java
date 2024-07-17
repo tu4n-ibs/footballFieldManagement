@@ -5,6 +5,7 @@ import lombok.Data;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.List;
 
 @Data
 @Entity
@@ -24,5 +25,7 @@ public class FootballFields {
 
     @ManyToOne
     private User user;
+    @ManyToMany(fetch = FetchType.EAGER)
+    private List<TimeFields> timeFields;
 
 }
