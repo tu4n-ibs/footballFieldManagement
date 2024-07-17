@@ -22,6 +22,7 @@ public class User {
     private String password;
     private String phone;
     private String avatar;
+    private String location;
     private boolean status;
     private boolean state;
     @ManyToMany(fetch = FetchType.EAGER)

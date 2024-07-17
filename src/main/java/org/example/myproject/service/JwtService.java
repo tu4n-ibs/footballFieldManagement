@@ -2,6 +2,7 @@ package org.example.myproject.service;
 
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.security.core.Authentication;
 import org.example.myproject.dto.UserPrinciple;
 import org.example.myproject.model.JwtToken;
@@ -15,6 +16,8 @@ import org.slf4j.LoggerFactory;
 
 import javax.crypto.SecretKey;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 @Service
 public class JwtService {
@@ -86,5 +89,23 @@ public class JwtService {
                 .setSigningKey(SECRET_KEY)
                 .parseClaimsJws(token)
                 .getBody().getSubject();
+    }
+
+    private Set<String> blacklistedTokens = new HashSet<>();
+
+    public void blacklistToken(String token) {
+        blacklistedTokens.add(token);
+    }
+
+    public boolean isTokenBlacklisted(String token) {
+        return blacklistedTokens.contains(token);
+    }
+
+    public String getJwtFromRequest(HttpServletRequest request) {
+        String bearerToken = request.getHeader("Authorization");
+        if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
+            return bearerToken.substring(7);
+        }
+        return null;
     }
 }
