@@ -62,6 +62,12 @@ public class OwnerController {
         return new ResponseEntity<>(bookingList, HttpStatus.OK);
     }
 
+    @GetMapping("/{id}/getBooking")
+    public ResponseEntity getBooking(@PathVariable long id) {
+        List<Booking> bookingList = bookingService.findAllBookingByFootballFieldsId(id);
+        return new ResponseEntity<>(bookingList, HttpStatus.OK);
+    }
+
     @PutMapping("/{id}/status")
     public ResponseEntity<FootballFields> updateStatus(@PathVariable long id, @RequestParam boolean status) {
         FootballFields updatedField = fieldsService.update(id, status);

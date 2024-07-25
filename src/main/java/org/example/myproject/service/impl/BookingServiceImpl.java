@@ -53,4 +53,9 @@ public class BookingServiceImpl implements BookingService {
     public List<Booking> findAllBookingByUserId(Long userId) {
         return bookingRepository.findAllBookingByUserId(userId);
     }
+
+    @Override
+    public List<Booking> findAllBookingByFootballFieldsId(Long footballFieldsId) {
+        return bookingRepository.findAllBookingByFootballFieldsId(footballFieldsId);
+    }
 }
