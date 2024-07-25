@@ -84,4 +84,17 @@ public class UserController {
         );
         return new ResponseEntity<>(footballFields, HttpStatus.OK);
     }
+
+    @GetMapping("/{id}/user")
+    public ResponseEntity getUser(@PathVariable long id) {
+        Optional<User> user = userService.findById(id);
+        return new ResponseEntity<>(user, HttpStatus.OK);
+    }
+
+    @PutMapping("/{id}/updateUser")
+    public ResponseEntity updateUser(@PathVariable long id, @RequestBody User user) {
+        user.setId(id);
+        userService.save(user);
+        return new ResponseEntity<>("update successful",HttpStatus.OK);
+    }
 }
